@@ -23,7 +23,7 @@ public:
 	static std::string getIPAddress(const std::string &name_interface);
 
 	static time_t getTime(int year, int month, int date, int hour, int minute, int second);
-	static void lowess(double span, double* source, double* out, int num_value);
+	static void lowess(double span, double* source, double* out, int num_data);
 	static std::string getCRLFString(const char* c);
 	static bool hasTheHead(const char* source, const char* head);
 	static bool hasTheHeadFoot(const char* source, const char* head, const char* foot);
@@ -32,7 +32,8 @@ public:
 	static int atoiHeading(const char* c);
 	static std::ostream& hexdump(std::ostream& ost, const void* bin, size_t length);
 	static std::vector<unsigned char> hexToBinary(const std::string& hex);
-	std::string getStringMillisec(const struct timeval* tv);
+	static std::string getStringMillisec(const struct timeval* tv);
+	static std::vector<std::vector<std::string> > load_csv(const char* path_file);
 
 private:
 	static bool sort_string(const std::string& a, const std::string& b);

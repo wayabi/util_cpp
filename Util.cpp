@@ -182,12 +182,7 @@ vector<string> Util::split(string source, char delimiter)
 	const char *c = source.c_str();
 	for(int i=0;i<size;++i){
 		if(i==size-1){
-			if(*(c+i) == delimiter){
-				v_ret.push_back(string(c, index, i-index));
-				v_ret.push_back(string(""));
-			}else{
-				v_ret.push_back(string(c, index, i-index+1));
-			}
+			v_ret.push_back(string(c, index, i-index+1));
 		}else if(*(c+i) == delimiter){
 			v_ret.push_back(string(c, index, i-index));
 			index = i+1;
@@ -285,11 +280,6 @@ static int ucs2_to_utf8 (int ucs2, char * utf8)
     return -1;
 }
 
-/**
- * @brief UCS-2文字コードの16進数テキスト表記をUTF-8フォーマット形式に変換する。変換後UTF-8のために、新たにメモリ確保を行う。
- * @param hex_texted_ucs2 UCS-2文字コードの16進数テキスト（例："0074006500730074"）
- * @return gchar* 変換後のUTF-8形式文字列。新たにメモリ確保される。
- */
 string Util::hex_texted_ucs2_to_utf8(const char *hex_texted_ucs2)
 {
 	if(hex_texted_ucs2 == NULL || strlen(hex_texted_ucs2) == 0) return NULL;
@@ -431,26 +421,25 @@ static double lowess_s(int r, int t, int index_start_nn, int index_end_nn)
 	return sum;
 }
 
-void Util::lowess(double span, double* source, double* out, int num_value)
+void Util::lowess(double span, double* source, double* out, int num_data)
 {
-	int size_nn = num_value*span;
+	int size_nn = num_data*span;
 	int num_nn_before = size_nn/2;
 
 	int index_start_nn = 0;
 	int index_end_nn = 0;
-	for(int i=0;i<num_value;++i){
+	for(int i=0;i<num_data;++i){
 		index_start_nn = i - num_nn_before;
 		if(index_start_nn < 0) index_start_nn = 0;
 		index_end_nn = index_start_nn+size_nn-1;
-		if(index_end_nn >= num_value){
-			index_end_nn = num_value-1;
+		if(index_end_nn >= num_data){
+			index_end_nn = num_data-1;
 			index_start_nn = index_end_nn-size_nn+1;
 		}
-//printf("                          %d\n", index_end_nn-index_start_nn);
+
 		double s0 = lowess_s(0, i, index_start_nn, index_end_nn);
 		double s1 = lowess_s(1, i, index_start_nn, index_end_nn);
 		double s2 = lowess_s(2, i, index_start_nn, index_end_nn);
-//printf("s = %f, %f, %f\n", s0, s1, s2);
 		double sum = 0;
 		for(int j=index_start_nn;j<=index_end_nn;++j){
 			int max_range = size_nn/2;
@@ -640,3 +629,23 @@ string Util::getStringMillisec(const struct timeval* tv)
 		(int)(tv1.tv_usec/1000));
 	return string(buf);
 }
+
+std::vector<std::vector<string> > Util::load_csv(const char* path_file)
+{
+	vector<vector<string> > ret;
+	FILE* f;
+	if((f = fopen(path_file, "r")) == NULL){
+		printf("file open error:%s\n", path_file);
+		return ret;
+	}
+	vector<char> buf;
+	const int size_buf = 1024*128;
+	buf.resize(size_buf);
+	while(fgets(&buf[0], size_buf, f)){
+		vector<string> ss = Util::split(Util::trim(string(&buf[0])), ',');
+		ret.push_back(ss);
+	}
+	fclose(f);
+	return ret;
+}
+
