@@ -1,10 +1,13 @@
 #include "profile_timer.h"
 #include <chrono>
+#include <iomanip>
 
 std::map<std::string, profile_timer::timer_info> profile_timer::map_;
 int profile_timer::count_fps_ = 0;
 long long profile_timer::time_fps_ = 0;
 float profile_timer::fps_ = 0;
+
+using namespace std;
 
 void profile_timer::count_fps()
 {
@@ -60,11 +63,22 @@ double profile_timer::get_average(const std::string& tag)
 		int s = map_[tag].duration_.size();
 		if(s == 0) return 0;
 		long long sum = 0;
-		for(auto ite = map_[tag].duration_.begin();ite != map_[tag].duration_.end();++ite){
+		auto ite = map_[tag].duration_.begin();
+		for(int i=0;i<s;++i){
 			sum += *ite;
+			++ite;
 		}
 		return (double)sum / s;
 	}else{
 		return 0;
+	}
+}
+
+void profile_timer::dump(ostream& out)
+{
+	out << std::system("clear") << endl;
+	for(auto ite = map_.begin();ite != map_.end();++ite){
+		out << std::setw(16) << std::left << ite->first << ": " << 
+			std::setw(12) << std::right << (int)get_average(ite->first) << endl;
 	}
 }

@@ -5,6 +5,7 @@
 #include <map>
 #include <deque>
 #include <utility>
+#include <ostream>
 
 class profile_timer {
 private:
@@ -22,6 +23,8 @@ public:
 	static void start(const std::string& tag, int size_buf_average);
 	static void end(const std::string& tag);
 	static double get_average(const std::string& tag);
+	static void dump(std::ostream& out);
+
 private:
 	static std::map<std::string, timer_info> map_;
 	static int count_fps_;
