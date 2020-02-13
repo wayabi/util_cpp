@@ -35,7 +35,9 @@ int main(int argc, char** argv){
 		profile_timer::end(t3);
 		//cout << "fps: " << fps << ",  ave1: " << ave1 << ", ave2: " << ave2 << ", ave3: " << ave3 << ", ave4: " << ave4 << endl;
 		profile_timer::end(t2);
+		profile_timer::start("dump", 10);
 		profile_timer::dump(cout);
+		profile_timer::end();
 	}
 	return 0;
 }
