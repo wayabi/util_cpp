@@ -26,6 +26,7 @@ public:
 	static void end();
 	static double get_average(const std::string& tag);
 	static void dump(std::ostream& out);
+	static void wait_fps(int fps);
 
 private:
 	static std::map<std::string, timer_info> map_;
@@ -33,6 +34,9 @@ private:
 	static long long time_fps_;
 	static float fps_;
 	static std::string tag_last_;
+
+	static long long wait_micro_sec_last_;
+	static int wait_fps_count_;
 };
 
 #endif

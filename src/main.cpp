@@ -16,6 +16,7 @@ int main(int argc, char** argv){
 	string t4 = "t4";
 
 	while(true){
+		profile_timer::wait_fps(30);
 		profile_timer::start(t2, 30);
 		profile_timer::start(t4, 30);
 		profile_timer::count_fps();
@@ -33,7 +34,7 @@ int main(int argc, char** argv){
 		double ave3 = profile_timer::get_average(t3);
 		double ave4 = profile_timer::get_average(t4);
 		profile_timer::end(t3);
-		//cout << "fps: " << fps << ",  ave1: " << ave1 << ", ave2: " << ave2 << ", ave3: " << ave3 << ", ave4: " << ave4 << endl;
+		cout << "fps: " << fps << ",  ave1: " << ave1 << ", ave2: " << ave2 << ", ave3: " << ave3 << ", ave4: " << ave4 << endl;
 		profile_timer::end(t2);
 		profile_timer::start("dump", 10);
 		profile_timer::dump(cout);

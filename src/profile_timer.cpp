@@ -1,8 +1,12 @@
 #include "profile_timer.h"
 #include <chrono>
 #include <iomanip>
+#include <unistd.h>
 
 using namespace std;
+
+long long profile_timer::wait_micro_sec_last_ = -1;
+int profile_timer::wait_fps_count_ = 0;
 
 std::map<std::string, profile_timer::timer_info> profile_timer::map_;
 int profile_timer::count_fps_ = 0;
@@ -96,5 +100,27 @@ void profile_timer::dump(ostream& out)
 	for(auto ite = map_.begin();ite != map_.end();++ite){
 		out << std::setw(16) << std::left << ite->first << ": " << 
 			std::setw(12) << std::right << (int)get_average(ite->first) << endl;
+	}
+}
+
+void profile_timer::wait_fps(int fps)
+{
+	if(wait_micro_sec_last_ == -1){
+		wait_micro_sec_last_ = get_microsec();
+		wait_fps_count_ = 0;
+		return;
+	}
+
+	long long t0 = get_microsec();
+	long long t = t0 - wait_micro_sec_last_;
+	++wait_fps_count_;
+	long long t_wait = wait_fps_count_ * (1000000 / fps);
+	t_wait = t_wait - t;
+	if(t_wait < 0) t_wait = 0;
+	usleep(t_wait);
+
+	if(wait_fps_count_ >= fps){
+		wait_fps_count_ = 0;
+		wait_micro_sec_last_ = get_microsec();
 	}
 }
